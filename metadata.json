@@ -1,0 +1,7 @@
+{
+  "name": "EcoVend - AI Recycling Hub",
+  "description": "A smart vending machine application that uses AI to identify recyclable items and rewards users with shopping and food vouchers.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
