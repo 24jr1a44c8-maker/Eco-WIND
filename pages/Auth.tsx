@@ -4,9 +4,10 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 interface AuthProps {
   onLogin: (email: string, password: string, isSignup: boolean) => void;
   onQuickLogin: (method: 'QR' | 'FINGERPRINT') => void;
+  onCancel: () => void;
 }
 
-const Auth: React.FC<AuthProps> = ({ onLogin, onQuickLogin }) => {
+const Auth: React.FC<AuthProps> = ({ onLogin, onQuickLogin, onCancel }) => {
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -56,7 +57,13 @@ const Auth: React.FC<AuthProps> = ({ onLogin, onQuickLogin }) => {
       <div className="max-w-md w-full bg-white rounded-3xl shadow-xl shadow-slate-200 border border-slate-100 overflow-hidden relative">
         
         {/* Header */}
-        <div className="bg-green-600 p-8 text-white text-center">
+        <div className="bg-green-600 p-8 text-white text-center relative">
+          <button 
+            onClick={onCancel}
+            className="absolute left-6 top-8 text-white/50 hover:text-white transition-colors"
+          >
+            <i className="fa-solid fa-arrow-left text-xl"></i>
+          </button>
           <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-md">
             <i className="fa-solid fa-leaf text-3xl"></i>
           </div>

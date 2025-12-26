@@ -9,10 +9,12 @@ import Rewards from './pages/Rewards';
 import Wallet from './pages/Wallet';
 import Shop from './pages/Shop';
 import History from './pages/History';
+import Landing from './pages/Landing';
 import { User, Activity, ActivityType, RecycleCategory } from './types';
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [intendedChoice, setIntendedChoice] = useState<'SHOP' | 'RECYCLE' | null>(null);
 
   // Initialize: Check for session
   useEffect(() => {
@@ -92,6 +94,7 @@ const App: React.FC = () => {
 
   const handleLogout = () => {
     setCurrentUser(null);
+    setIntendedChoice(null);
     localStorage.removeItem('ecovend_session');
   };
 
@@ -153,7 +156,7 @@ const App: React.FC = () => {
   const handleCashOut = (coins: number, method: string) => {
     if (!currentUser || currentUser.balance < coins) return false;
 
-    const cashValue = coins * 0.1;
+    const cashValue = coins * 1.0;
     const newActivity: Activity = {
       id: Math.random().toString(36).substr(2, 9),
       type: 'CASH_OUT',
@@ -197,15 +200,29 @@ const App: React.FC = () => {
     return true;
   };
 
+  // --- Flow Management ---
   if (!currentUser) {
-    return <Auth onLogin={handleAuth} onQuickLogin={handleQuickLogin} />;
+    if (!intendedChoice) {
+      return <Landing onSelect={setIntendedChoice} />;
+    }
+    return (
+      <Auth 
+        onLogin={handleAuth} 
+        onQuickLogin={handleQuickLogin} 
+        onCancel={() => setIntendedChoice(null)}
+      />
+    );
   }
 
   return (
     <Router>
       <Layout balance={currentUser.balance} email={currentUser.email} onLogout={handleLogout}>
         <Routes>
-          <Route path="/" element={<Dashboard user={currentUser} history={currentUser.activities.slice(0, 5)} />} />
+          <Route path="/" element={
+            intendedChoice === 'SHOP' ? <Navigate to="/shop" /> :
+            intendedChoice === 'RECYCLE' ? <Navigate to="/recycle" /> :
+            <Dashboard user={currentUser} history={currentUser.activities.slice(0, 5)} />
+          } />
           <Route path="/recycle" element={<Recycle onComplete={(name, cat, coins) => addRecycleActivity(name, cat as RecycleCategory, coins)} />} />
           <Route path="/shop" element={<Shop balance={currentUser.balance} onPurchase={handlePurchase} />} />
           <Route path="/wallet" element={<Wallet balance={currentUser.balance} onCashOut={handleCashOut} />} />

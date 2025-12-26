@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { PRODUCTS } from '../constants';
 import { Product } from '../types';
 
@@ -12,11 +12,13 @@ const COIN_DISCOUNT_RATE = 1.0; // Each coin reduces price by ₹1.00
 
 const Shop: React.FC<ShopProps> = ({ balance, onPurchase }) => {
   const [filter, setFilter] = useState<'ALL' | 'DRINK' | 'SNACK'>('ALL');
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [coinsToUse, setCoinsToUse] = useState<number>(0);
   const [dispensing, setDispensing] = useState<string | null>(null);
 
   const handleProductSelect = (product: Product) => {
+    if (product.stock <= 0) return;
     setSelectedProduct(product);
     // Suggest using up to the max discount for this product or the user's balance
     setCoinsToUse(Math.min(balance, product.price));
@@ -38,9 +40,13 @@ const Shop: React.FC<ShopProps> = ({ balance, onPurchase }) => {
     }, 2000);
   };
 
-  const filteredProducts = filter === 'ALL' 
-    ? PRODUCTS 
-    : PRODUCTS.filter(p => p.category === filter);
+  const filteredProducts = useMemo(() => {
+    return PRODUCTS.filter(p => {
+      const matchesCategory = filter === 'ALL' || p.category === filter;
+      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [filter, searchQuery]);
 
   const calculateFinalPrice = (product: Product, coins: number) => {
     const discount = coins * COIN_DISCOUNT_RATE;
@@ -49,56 +55,108 @@ const Shop: React.FC<ShopProps> = ({ balance, onPurchase }) => {
 
   return (
     <div className="max-w-6xl mx-auto animate-in fade-in duration-500">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
         <div>
           <h1 className="text-3xl font-bold text-slate-800">Canteen Shop</h1>
           <p className="text-slate-500 mt-2">Use coins to get cheaper snacks and cold drinks at college/mall.</p>
         </div>
         
-        <div className="flex bg-white p-1 rounded-xl border border-slate-200 self-start md:self-auto">
-          {(['ALL', 'DRINK', 'SNACK'] as const).map(cat => (
-            <button
-              key={cat}
-              onClick={() => setFilter(cat)}
-              className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${filter === cat ? 'bg-green-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-800'}`}
-            >
-              {cat}s
-            </button>
-          ))}
+        <div className="flex flex-col md:flex-row gap-4 w-full lg:w-auto">
+          {/* Search Bar */}
+          <div className="relative flex-1 md:min-w-[300px]">
+            <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input 
+              type="text" 
+              placeholder="Search snacks, drinks..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all outline-none text-sm font-medium"
+            />
+          </div>
+
+          {/* Category Filters */}
+          <div className="flex bg-white p-1 rounded-xl border border-slate-200 shrink-0">
+            {(['ALL', 'DRINK', 'SNACK'] as const).map(cat => (
+              <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                className={`px-5 py-2 rounded-lg text-sm font-bold transition-all ${filter === cat ? 'bg-green-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-800'}`}
+              >
+                {cat}s
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
-        {filteredProducts.map(product => (
-          <div 
-            key={product.id} 
-            onClick={() => handleProductSelect(product)}
-            className={`bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col group relative cursor-pointer transition-all hover:shadow-xl hover:-translate-y-1 ${selectedProduct?.id === product.id ? 'ring-2 ring-green-500' : ''}`}
+      {filteredProducts.length === 0 ? (
+        <div className="bg-white rounded-[2.5rem] p-20 text-center border border-dashed border-slate-200 mb-12">
+          <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+            <i className="fa-solid fa-search text-2xl"></i>
+          </div>
+          <p className="text-slate-500 font-medium">No items found matching your search.</p>
+          <button 
+            onClick={() => {setSearchQuery(''); setFilter('ALL');}}
+            className="mt-4 text-green-600 font-bold hover:underline"
           >
-            <div className="aspect-[4/5] relative overflow-hidden bg-slate-100">
-              <img 
-                src={product.image} 
-                alt={product.name} 
-                className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${dispensing === product.id ? 'blur-sm grayscale' : ''}`}
-              />
-              <div className="absolute top-3 left-3 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-[10px] font-black text-slate-800 uppercase">
-                {product.category}
-              </div>
-            </div>
+            Clear all filters
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+          {filteredProducts.map(product => {
+            const isOutOfStock = product.stock <= 0;
+            const isLowStock = product.stock > 0 && product.stock <= 5;
             
-            <div className="p-4">
-              <h3 className="text-sm font-bold text-slate-800 truncate">{product.name}</h3>
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-sm font-black text-slate-900">₹{product.cashPrice.toFixed(2)}</span>
-                <div className="flex items-center gap-1 bg-green-50 px-2 py-0.5 rounded-md">
-                   <i className="fa-solid fa-coins text-[8px] text-yellow-500"></i>
-                   <span className="text-[10px] font-bold text-green-700">Save ₹{(product.price * COIN_DISCOUNT_RATE).toFixed(0)}</span>
+            return (
+              <div 
+                key={product.id} 
+                onClick={() => !isOutOfStock && handleProductSelect(product)}
+                className={`bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col group relative transition-all hover:shadow-xl ${isOutOfStock ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer hover:-translate-y-1'} ${selectedProduct?.id === product.id ? 'ring-2 ring-green-500' : ''}`}
+              >
+                <div className="aspect-[4/5] relative overflow-hidden bg-slate-100">
+                  <img 
+                    src={product.image} 
+                    alt={product.name} 
+                    className={`w-full h-full object-cover transition-transform duration-700 ${!isOutOfStock && 'group-hover:scale-110'} ${isOutOfStock || dispensing === product.id ? 'grayscale' : ''}`}
+                  />
+                  
+                  {/* Status Badges */}
+                  <div className="absolute top-3 left-3 flex flex-col gap-2">
+                    <div className="bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-[10px] font-black text-slate-800 uppercase shadow-sm">
+                      {product.category}
+                    </div>
+                    {isOutOfStock ? (
+                      <div className="bg-red-600 text-white px-2 py-1 rounded-lg text-[10px] font-black uppercase shadow-sm animate-pulse">
+                        Out of Stock
+                      </div>
+                    ) : isLowStock && (
+                      <div className="bg-amber-500 text-white px-2 py-1 rounded-lg text-[10px] font-black uppercase shadow-sm">
+                        Low Stock: {product.stock}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="p-4">
+                  <h3 className="text-sm font-bold text-slate-800 truncate">{product.name}</h3>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className={`text-sm font-black ${isOutOfStock ? 'text-slate-400' : 'text-slate-900'}`}>
+                      ₹{product.cashPrice.toFixed(2)}
+                    </span>
+                    {!isOutOfStock && (
+                      <div className="flex items-center gap-1 bg-green-50 px-2 py-0.5 rounded-md">
+                        <i className="fa-solid fa-coins text-[8px] text-yellow-500"></i>
+                        <span className="text-[10px] font-bold text-green-700">Save ₹{(product.price * COIN_DISCOUNT_RATE).toFixed(0)}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        ))}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Checkout Drawer / Modal */}
       {selectedProduct && (
@@ -111,6 +169,9 @@ const Shop: React.FC<ShopProps> = ({ balance, onPurchase }) => {
                    <div>
                       <h2 className="text-xl font-bold text-slate-800">{selectedProduct.name}</h2>
                       <p className="text-sm text-slate-400">Apply coins for instant savings</p>
+                      <p className="text-xs font-bold text-slate-500 mt-1 uppercase tracking-wider">
+                        {selectedProduct.stock} items remaining
+                      </p>
                    </div>
                 </div>
                 <button onClick={() => setSelectedProduct(null)} className="text-slate-300 hover:text-slate-500 text-xl"><i className="fa-solid fa-xmark"></i></button>
