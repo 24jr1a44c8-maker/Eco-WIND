@@ -43,7 +43,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 'p2',
-    name: 'Coca-Cola Zero',
+    name: 'Coca-Cola Zero (PET)',
     price: 40,
     cashPrice: 50.00,
     category: 'DRINK',
@@ -60,6 +60,42 @@ export const PRODUCTS: Product[] = [
     stock: 20
   },
   {
+    id: 'p3-1',
+    name: 'Bingo! Mad Angles',
+    price: 20,
+    cashPrice: 30.00,
+    category: 'SNACK',
+    image: 'https://images.unsplash.com/photo-1600490033605-3de4ef2e8251?auto=format&fit=crop&q=80&w=400',
+    stock: 22
+  },
+  {
+    id: 'p3-2',
+    name: 'Pringles Original',
+    price: 80,
+    cashPrice: 110.00,
+    category: 'SNACK',
+    image: 'https://images.unsplash.com/photo-1585238341267-1cfec2046a55?auto=format&fit=crop&q=80&w=400',
+    stock: 10
+  },
+  {
+    id: 'p3-3',
+    name: 'Uncle Chipps (Plain)',
+    price: 20,
+    cashPrice: 30.00,
+    category: 'SNACK',
+    image: 'https://images.unsplash.com/photo-1528751011213-98006e001f30?auto=format&fit=crop&q=80&w=400',
+    stock: 15
+  },
+  {
+    id: 'p3-4',
+    name: 'Haldiram Aloo Bhujia',
+    price: 15,
+    cashPrice: 20.00,
+    category: 'SNACK',
+    image: 'https://images.unsplash.com/photo-1605333396915-47ed6b68a00e?auto=format&fit=crop&q=80&w=400',
+    stock: 30
+  },
+  {
     id: 'p4',
     name: 'Dairy Milk Silk',
     price: 60,
@@ -67,6 +103,24 @@ export const PRODUCTS: Product[] = [
     category: 'SNACK',
     image: 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&q=80&w=400',
     stock: 8
+  },
+  {
+    id: 'p4-1',
+    name: 'Dairy Milk Fruit & Nut',
+    price: 45,
+    cashPrice: 60.00,
+    category: 'SNACK',
+    image: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&q=80&w=400',
+    stock: 12
+  },
+  {
+    id: 'p4-2',
+    name: 'Dairy Milk Crackle',
+    price: 45,
+    cashPrice: 60.00,
+    category: 'SNACK',
+    image: 'https://images.unsplash.com/photo-1623156323174-0d8a6f5e4347?auto=format&fit=crop&q=80&w=400',
+    stock: 10
   },
   {
     id: 'p5',
@@ -130,6 +184,42 @@ export const PRODUCTS: Product[] = [
     category: 'SNACK',
     image: 'https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?auto=format&fit=crop&q=80&w=400',
     stock: 30
+  },
+  {
+    id: 'p12',
+    name: 'Maaza Mango (250ml)',
+    price: 15,
+    cashPrice: 20.00,
+    category: 'DRINK',
+    image: 'https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&q=80&w=400',
+    stock: 25
+  },
+  {
+    id: 'p13',
+    name: 'Thums Up (250ml PET)',
+    price: 15,
+    cashPrice: 20.00,
+    category: 'DRINK',
+    image: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&q=80&w=400',
+    stock: 18
+  },
+  {
+    id: 'p14',
+    name: 'Bisleri Water (500ml)',
+    price: 5,
+    cashPrice: 10.00,
+    category: 'DRINK',
+    image: 'https://images.unsplash.com/photo-1616118132284-3dec9aa1584c?auto=format&fit=crop&q=80&w=400',
+    stock: 50
+  },
+  {
+    id: 'p15',
+    name: 'Limca (PET)',
+    price: 30,
+    cashPrice: 40.00,
+    category: 'DRINK',
+    image: 'https://images.unsplash.com/photo-1625772290748-39126d79495e?auto=format&fit=crop&q=80&w=400',
+    stock: 10
   }
 ];
 
