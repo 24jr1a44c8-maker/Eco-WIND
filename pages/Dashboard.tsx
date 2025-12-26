@@ -13,8 +13,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user, history }) => {
   return (
     <div className="max-w-6xl mx-auto animate-in fade-in duration-500">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-800">Hello, {user.email.split('@')[0]}! 🌿</h1>
-        <p className="text-slate-500 mt-2">You're doing a great job saving the planet.</p>
+        <h1 className="text-3xl font-bold text-slate-800">Namaste, {user.email.split('@')[0]}! 🌿</h1>
+        <p className="text-slate-500 mt-2">You're making a real difference for India's environment.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
@@ -24,7 +24,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, history }) => {
           </div>
           <p className="text-slate-500 text-sm font-medium">Available Balance</p>
           <h3 className="text-2xl font-bold text-slate-800 mt-1">{user.balance} Coins</h3>
-          <p className="text-xs text-slate-400 mt-2">≈ ${(user.balance / 10).toFixed(2)} USD value</p>
+          <p className="text-xs text-slate-400 mt-2">≈ ₹{user.balance.toFixed(2)} total value</p>
         </div>
 
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
@@ -42,7 +42,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, history }) => {
           </div>
           <p className="text-slate-500 text-sm font-medium">Environmental Impact</p>
           <h3 className="text-2xl font-bold text-slate-800 mt-1">{(user.totalWeight / 1000).toFixed(1)} kg</h3>
-          <p className="text-xs text-slate-400 mt-2">CO2 emission offset estimated</p>
+          <p className="text-xs text-slate-400 mt-2">Waste diverted from landfills</p>
         </div>
       </div>
 
@@ -51,7 +51,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, history }) => {
           <div className="relative z-10">
             <h2 className="text-2xl font-bold text-slate-800 mb-4">Ready to recycle?</h2>
             <p className="text-slate-600 mb-6 max-w-sm">
-              Use our AI-powered scanner to identify your items and earn rewards instantly.
+              Scan your plastic bottles or cans at any EcoVend machine in your college or mall to earn ₹1 per item.
             </p>
             <Link to="/recycle" className="inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-700 transition-all">
               <i className="fa-solid fa-camera"></i> Start Scanner
@@ -64,7 +64,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, history }) => {
 
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-slate-800">Recent Activity</h2>
+            <h2 className="text-xl font-bold text-slate-800">Recent Transactions</h2>
             <Link to="/history" className="text-green-600 text-sm font-bold hover:underline">View All</Link>
           </div>
           <div className="space-y-4">

@@ -14,9 +14,9 @@ const Rewards: React.FC<RewardsProps> = ({ balance, onRedeem }) => {
   const handleRedeem = (id: string, cost: number, provider: string) => {
     if (onRedeem(cost, provider)) {
       setRedeemed(prev => [...prev, id]);
-      alert("Voucher redeemed successfully! Check your email/history for the code.");
+      alert("Voucher redeemed successfully! Code sent to your EcoVend inbox.");
     } else {
-      alert("Insufficient balance to redeem this voucher.");
+      alert("You need more Eco-Coins to redeem this voucher.");
     }
   };
 
@@ -28,8 +28,8 @@ const Rewards: React.FC<RewardsProps> = ({ balance, onRedeem }) => {
     <div className="max-w-6xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Rewards Marketplace</h1>
-          <p className="text-slate-500 mt-2">Spend your hard-earned coins on gift vouchers</p>
+          <h1 className="text-3xl font-bold text-slate-800">Rewards Catalog</h1>
+          <p className="text-slate-500 mt-2">Spend your recycling earnings on local shopping & food brands.</p>
         </div>
         
         <div className="flex bg-white p-1 rounded-xl border border-slate-200 self-start md:self-auto">
@@ -65,7 +65,7 @@ const Rewards: React.FC<RewardsProps> = ({ balance, onRedeem }) => {
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="text-xl font-bold text-slate-800">{voucher.provider}</h3>
                   <div className="text-right">
-                    <span className="text-lg font-bold text-slate-800">${voucher.amount}</span>
+                    <span className="text-lg font-bold text-slate-800">₹{voucher.amount}</span>
                   </div>
                 </div>
                 <p className="text-slate-500 text-sm mb-6">{voucher.description}</p>
@@ -73,7 +73,7 @@ const Rewards: React.FC<RewardsProps> = ({ balance, onRedeem }) => {
                 <div className="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <i className="fa-solid fa-coins text-yellow-500"></i>
-                    <span className="font-bold text-slate-800">{voucher.cost}</span>
+                    <span className="font-bold text-slate-800">{voucher.cost} Coins</span>
                   </div>
                   <button 
                     disabled={isRedeemed || balance < voucher.cost}

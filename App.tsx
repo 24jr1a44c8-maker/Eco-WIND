@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Recycle from './pages/Recycle';
 import Rewards from './pages/Rewards';
 import Wallet from './pages/Wallet';
+import Shop from './pages/Shop';
 import History from './pages/History';
 import { User, Activity, ActivityType, RecycleCategory } from './types';
 
@@ -173,6 +174,29 @@ const App: React.FC = () => {
     return true;
   };
 
+  const handlePurchase = (coinsUsed: number, productName: string, discountValue: number) => {
+    if (!currentUser || currentUser.balance < coinsUsed) return false;
+
+    const newActivity: Activity = {
+      id: Math.random().toString(36).substr(2, 9),
+      type: 'PURCHASE',
+      title: productName,
+      amount: -coinsUsed,
+      timestamp: Date.now(),
+      provider: 'Vending Slot',
+      currencyAmount: discountValue
+    };
+
+    const updatedUser = {
+      ...currentUser,
+      balance: currentUser.balance - coinsUsed,
+      activities: [newActivity, ...currentUser.activities]
+    };
+
+    updateUserData(updatedUser);
+    return true;
+  };
+
   if (!currentUser) {
     return <Auth onLogin={handleAuth} onQuickLogin={handleQuickLogin} />;
   }
@@ -183,6 +207,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Dashboard user={currentUser} history={currentUser.activities.slice(0, 5)} />} />
           <Route path="/recycle" element={<Recycle onComplete={(name, cat, coins) => addRecycleActivity(name, cat as RecycleCategory, coins)} />} />
+          <Route path="/shop" element={<Shop balance={currentUser.balance} onPurchase={handlePurchase} />} />
           <Route path="/wallet" element={<Wallet balance={currentUser.balance} onCashOut={handleCashOut} />} />
           <Route path="/rewards" element={<Rewards balance={currentUser.balance} onRedeem={(cost, provider) => addRedeemActivity(provider, cost)} />} />
           <Route path="/history" element={<History activities={currentUser.activities} />} />

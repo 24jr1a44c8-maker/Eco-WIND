@@ -39,15 +39,15 @@ const History: React.FC<HistoryProps> = ({ activities }) => {
   return (
     <div className="max-w-5xl mx-auto animate-in fade-in duration-500">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-800">Activity History</h1>
-        <p className="text-slate-500 mt-2">Track your recycling efforts and financial transactions.</p>
+        <h1 className="text-3xl font-bold text-slate-800">Recycling Log</h1>
+        <p className="text-slate-500 mt-2">History of your contributions and earned rewards.</p>
       </div>
 
       {/* Filter Bar */}
       <div className="flex flex-col md:flex-row gap-4 mb-8">
         <div className="flex-1 bg-white p-2 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <span className="text-[10px] font-bold text-slate-400 uppercase px-3 whitespace-nowrap">Filter by type:</span>
-          {(['ALL', 'RECYCLE', 'REDEEM', 'CASH_OUT'] as const).map((type) => (
+          <span className="text-[10px] font-bold text-slate-400 uppercase px-3 whitespace-nowrap">Filter:</span>
+          {(['ALL', 'RECYCLE', 'REDEEM', 'CASH_OUT', 'PURCHASE'] as const).map((type) => (
             <button
               key={type}
               onClick={() => setTypeFilter(type)}
@@ -57,13 +57,13 @@ const History: React.FC<HistoryProps> = ({ activities }) => {
                   : 'text-slate-500 hover:bg-slate-50'
               }`}
             >
-              {type === 'ALL' ? 'All Activities' : type.replace('_', ' ')}
+              {type === 'ALL' ? 'Everything' : type.replace('_', ' ')}
             </button>
           ))}
         </div>
 
         <div className="bg-white p-2 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <span className="text-[10px] font-bold text-slate-400 uppercase px-3 whitespace-nowrap">Timeframe:</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase px-3 whitespace-nowrap">Time:</span>
           {(['all', 'today', 'week', 'month'] as const).map((range) => (
             <button
               key={range}
@@ -89,7 +89,7 @@ const History: React.FC<HistoryProps> = ({ activities }) => {
                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Activity</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Category</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Date & Time</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Impact</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Value</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -98,15 +98,9 @@ const History: React.FC<HistoryProps> = ({ activities }) => {
                   <td colSpan={4} className="px-6 py-32 text-center text-slate-400">
                     <div className="flex flex-col items-center">
                       <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                        <i className="fa-solid fa-magnifying-glass text-2xl opacity-20"></i>
+                        <i className="fa-solid fa-clock-rotate-left text-2xl opacity-20"></i>
                       </div>
-                      <p className="font-semibold text-slate-500">No activities match your filters</p>
-                      <button 
-                        onClick={() => { setTypeFilter('ALL'); setDateFilter('all'); }}
-                        className="mt-4 text-green-600 font-bold text-sm hover:underline"
-                      >
-                        Clear all filters
-                      </button>
+                      <p className="font-semibold text-slate-500">No transactions found</p>
                     </div>
                   </td>
                 </tr>
@@ -118,18 +112,20 @@ const History: React.FC<HistoryProps> = ({ activities }) => {
                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm transition-transform group-hover:scale-110 ${
                            activity.type === 'RECYCLE' ? 'bg-green-100 text-green-600' : 
                            activity.type === 'REDEEM' ? 'bg-blue-100 text-blue-600' :
+                           activity.type === 'PURCHASE' ? 'bg-slate-800 text-white' :
                            'bg-amber-100 text-amber-600'
                          }`}>
                             <i className={`fa-solid ${
                               activity.type === 'RECYCLE' ? 'fa-recycle' : 
                               activity.type === 'REDEEM' ? 'fa-gift' : 
+                              activity.type === 'PURCHASE' ? 'fa-bottle-water' : 
                               'fa-wallet'
                             }`}></i>
                          </div>
                          <div>
                             <span className="font-bold text-slate-800 block text-sm">{activity.title}</span>
                             {activity.currencyAmount && (
-                               <span className="text-[10px] text-green-600 font-bold bg-green-50 px-1.5 py-0.5 rounded uppercase tracking-tighter">Value: ${activity.currencyAmount.toFixed(2)}</span>
+                               <span className="text-[10px] text-green-600 font-bold bg-green-50 px-1.5 py-0.5 rounded uppercase tracking-tighter">Value: ₹{activity.currencyAmount.toFixed(2)}</span>
                             )}
                          </div>
                       </div>
@@ -138,9 +134,10 @@ const History: React.FC<HistoryProps> = ({ activities }) => {
                       <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-tight ${
                         activity.type === 'RECYCLE' && activity.category ? CATEGORY_COLORS[activity.category] : 
                         activity.type === 'CASH_OUT' ? 'bg-amber-100 text-amber-700' :
+                        activity.type === 'PURCHASE' ? 'bg-slate-100 text-slate-800' :
                         'bg-slate-100 text-slate-500'
                       }`}>
-                        {activity.type === 'RECYCLE' ? activity.category : activity.type === 'CASH_OUT' ? 'MONEY' : 'REWARD'}
+                        {activity.type === 'RECYCLE' ? activity.category : activity.type === 'CASH_OUT' ? 'MONEY' : activity.type === 'PURCHASE' ? 'STORE' : 'REWARD'}
                       </span>
                     </td>
                     <td className="px-6 py-5">
@@ -162,28 +159,6 @@ const History: React.FC<HistoryProps> = ({ activities }) => {
               )}
             </tbody>
           </table>
-        </div>
-      </div>
-      
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-green-50 p-6 rounded-3xl border border-green-100 flex items-start gap-4">
-          <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-green-600 shadow-sm shrink-0">
-            <i className="fa-solid fa-chart-line text-xl"></i>
-          </div>
-          <div>
-            <h4 className="font-bold text-green-800">Recycling Trends</h4>
-            <p className="text-sm text-green-700 opacity-80 mt-1">Filtering your history helps you see which materials you recycle most. Keep it up!</p>
-          </div>
-        </div>
-
-        <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100 flex items-start gap-4">
-          <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-blue-600 shadow-sm shrink-0">
-            <i className="fa-solid fa-receipt text-xl"></i>
-          </div>
-          <div>
-            <h4 className="font-bold text-blue-900">E-Receipts</h4>
-            <p className="text-sm text-blue-800 opacity-80 mt-1">Every transaction is recorded with a unique ID for your security and can be used for warranty claims.</p>
-          </div>
         </div>
       </div>
     </div>

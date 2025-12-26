@@ -1,8 +1,19 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 
 const Layout: React.FC<{ children: React.ReactNode, balance: number, email: string, onLogout: () => void }> = ({ children, balance, email, onLogout }) => {
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+
+  // Trigger animation when balance changes
+  useEffect(() => {
+    if (balance > 0) {
+      setShouldAnimate(true);
+      const timer = setTimeout(() => setShouldAnimate(false), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [balance]);
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row">
       {/* Sidebar - Desktop */}
@@ -20,6 +31,9 @@ const Layout: React.FC<{ children: React.ReactNode, balance: number, email: stri
           </NavLink>
           <NavLink to="/recycle" className={({ isActive }) => `flex items-center gap-3 p-3 rounded-lg transition-all ${isActive ? 'bg-green-50 text-green-700 font-medium' : 'text-slate-500 hover:bg-slate-50'}`}>
             <i className="fa-solid fa-camera"></i> Recycle Item
+          </NavLink>
+          <NavLink to="/shop" className={({ isActive }) => `flex items-center gap-3 p-3 rounded-lg transition-all ${isActive ? 'bg-green-50 text-green-700 font-medium' : 'text-slate-500 hover:bg-slate-50'}`}>
+            <i className="fa-solid fa-bottle-water"></i> Vending Shop
           </NavLink>
           <NavLink to="/wallet" className={({ isActive }) => `flex items-center gap-3 p-3 rounded-lg transition-all ${isActive ? 'bg-green-50 text-green-700 font-medium' : 'text-slate-500 hover:bg-slate-50'}`}>
             <i className="fa-solid fa-wallet"></i> Wallet & Cash
@@ -43,10 +57,10 @@ const Layout: React.FC<{ children: React.ReactNode, balance: number, email: stri
                LOGOUT
              </button>
           </div>
-          <div className="bg-green-600 rounded-2xl p-4 text-white shadow-lg">
+          <div className={`bg-green-600 rounded-2xl p-4 text-white shadow-lg transition-all duration-500 ${shouldAnimate ? 'scale-105 ring-4 ring-yellow-400/30' : ''}`}>
             <p className="text-xs opacity-80 mb-1">Current Balance</p>
             <div className="flex items-center gap-2">
-              <i className="fa-solid fa-coins text-yellow-400"></i>
+              <i className={`fa-solid fa-coins text-yellow-400 transition-transform duration-700 ${shouldAnimate ? 'rotate-[360deg] scale-125' : ''}`}></i>
               <span className="text-2xl font-bold">{balance}</span>
               <span className="text-sm">coins</span>
             </div>
@@ -63,8 +77,8 @@ const Layout: React.FC<{ children: React.ReactNode, balance: number, email: stri
           <span className="font-bold text-slate-800">EcoVend</span>
         </div>
         <div className="flex items-center gap-3">
-          <div className="bg-green-100 px-3 py-1 rounded-full text-green-700 font-bold flex items-center gap-1 text-sm">
-            <i className="fa-solid fa-coins text-yellow-500"></i> {balance}
+          <div className={`bg-green-100 px-3 py-1 rounded-full text-green-700 font-bold flex items-center gap-1 text-sm transition-all duration-500 ${shouldAnimate ? 'scale-110 bg-yellow-100' : ''}`}>
+            <i className={`fa-solid fa-coins text-yellow-500 transition-transform duration-700 ${shouldAnimate ? 'rotate-[360deg]' : ''}`}></i> {balance}
           </div>
           <button onClick={onLogout} className="text-slate-400"><i className="fa-solid fa-right-from-bracket"></i></button>
         </div>
@@ -84,6 +98,10 @@ const Layout: React.FC<{ children: React.ReactNode, balance: number, email: stri
         <NavLink to="/recycle" className={({ isActive }) => `flex flex-col items-center gap-1 ${isActive ? 'text-green-600' : 'text-slate-400'}`}>
           <i className="fa-solid fa-camera text-lg"></i>
           <span className="text-[10px]">Recycle</span>
+        </NavLink>
+        <NavLink to="/shop" className={({ isActive }) => `flex flex-col items-center gap-1 ${isActive ? 'text-green-600' : 'text-slate-400'}`}>
+          <i className="fa-solid fa-bottle-water text-lg"></i>
+          <span className="text-[10px]">Shop</span>
         </NavLink>
         <NavLink to="/wallet" className={({ isActive }) => `flex flex-col items-center gap-1 ${isActive ? 'text-green-600' : 'text-slate-400'}`}>
           <i className="fa-solid fa-wallet text-lg"></i>

@@ -6,16 +6,16 @@ interface WalletProps {
   onCashOut: (coins: number, method: string) => boolean;
 }
 
-const COIN_RATE = 0.1; // 1 Coin = $0.10
+const COIN_RATE = 1.0; // 1 Coin = ₹1.00
 
 const Wallet: React.FC<WalletProps> = ({ balance, onCashOut }) => {
   const [amount, setAmount] = useState<number>(0);
-  const [method, setMethod] = useState<string>('PayPal');
+  const [method, setMethod] = useState<string>('UPI (PhonePe/GPay)');
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleWithdraw = () => {
     if (amount <= 0 || amount > balance) {
-      alert("Invalid amount selected.");
+      alert("Please enter a valid amount within your balance.");
       return;
     }
 
@@ -24,7 +24,7 @@ const Wallet: React.FC<WalletProps> = ({ balance, onCashOut }) => {
       const success = onCashOut(amount, method);
       setIsProcessing(false);
       if (success) {
-        alert(`Successfully transferred $${(amount * COIN_RATE).toFixed(2)} to your ${method} account!`);
+        alert(`Successfully transferred ₹${(amount * COIN_RATE).toFixed(2)} to your ${method} account!`);
         setAmount(0);
       }
     }, 1500);
@@ -36,25 +36,25 @@ const Wallet: React.FC<WalletProps> = ({ balance, onCashOut }) => {
     <div className="max-w-4xl mx-auto animate-in fade-in duration-500">
       <div className="mb-10">
         <h1 className="text-3xl font-bold text-slate-800">Digital Wallet</h1>
-        <p className="text-slate-500 mt-2">Convert your eco-coins into online money instantly.</p>
+        <p className="text-slate-500 mt-2">Withdraw your recycling earnings to your bank or UPI.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Stats & Balance */}
         <div className="lg:col-span-1 space-y-6">
           <div className="bg-green-600 p-8 rounded-3xl text-white shadow-xl shadow-green-100">
-            <p className="text-sm opacity-80 mb-1">Available to Withdraw</p>
-            <h2 className="text-4xl font-bold mb-6">${(balance * COIN_RATE).toFixed(2)}</h2>
+            <p className="text-sm opacity-80 mb-1">Withdrawable Balance</p>
+            <h2 className="text-4xl font-bold mb-6">₹{(balance * COIN_RATE).toFixed(2)}</h2>
             <div className="flex items-center gap-2 bg-white/20 p-3 rounded-2xl backdrop-blur-sm">
               <i className="fa-solid fa-coins text-yellow-400"></i>
-              <span className="font-bold">{balance} Coins</span>
+              <span className="font-bold">{balance} Eco-Coins</span>
             </div>
           </div>
 
           <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-            <h3 className="font-bold text-slate-800 mb-4">Transfer Methods</h3>
+            <h3 className="font-bold text-slate-800 mb-4">Transfer Via</h3>
             <div className="space-y-3">
-              {['PayPal', 'Direct Bank', 'Apple Pay', 'Google Pay'].map(m => (
+              {['UPI (PhonePe/GPay)', 'Paytm Wallet', 'Net Banking', 'Amazon Pay'].map(m => (
                 <button
                   key={m}
                   onClick={() => setMethod(m)}
@@ -71,11 +71,11 @@ const Wallet: React.FC<WalletProps> = ({ balance, onCashOut }) => {
         {/* Right Column: Transaction Form */}
         <div className="lg:col-span-2">
           <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
-            <h3 className="text-xl font-bold text-slate-800 mb-6">Convert Coins</h3>
+            <h3 className="text-xl font-bold text-slate-800 mb-6">Convert to Cash</h3>
             
             <div className="space-y-6">
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Amount of Coins</label>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Amount of Coins to Convert</label>
                 <div className="relative">
                   <input
                     type="number"
@@ -105,12 +105,12 @@ const Wallet: React.FC<WalletProps> = ({ balance, onCashOut }) => {
 
               <div className="bg-slate-50 p-6 rounded-2xl flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-slate-400 font-bold uppercase mb-1">Estimated Value</p>
-                  <p className="text-3xl font-bold text-green-600">${cashValue}</p>
+                  <p className="text-xs text-slate-400 font-bold uppercase mb-1">You will receive</p>
+                  <p className="text-3xl font-bold text-green-600">₹{cashValue}</p>
                 </div>
                 <div className="text-right text-slate-400">
                   <p className="text-[10px] font-bold uppercase mb-1">Exchange Rate</p>
-                  <p className="text-sm font-semibold">1 Coin = $0.10</p>
+                  <p className="text-sm font-semibold">1 Coin = ₹1.00</p>
                 </div>
               </div>
 
@@ -122,7 +122,7 @@ const Wallet: React.FC<WalletProps> = ({ balance, onCashOut }) => {
                 {isProcessing ? (
                   <span className="flex items-center justify-center gap-3">
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Processing Transaction...
+                    Processing Payout...
                   </span>
                 ) : (
                   `Withdraw to ${method}`
@@ -130,20 +130,20 @@ const Wallet: React.FC<WalletProps> = ({ balance, onCashOut }) => {
               </button>
 
               <p className="text-center text-xs text-slate-400">
-                <i className="fa-solid fa-shield-halved mr-2"></i>
-                Transactions are encrypted and secured by EcoVend Financial.
+                <i className="fa-solid fa-lock mr-2"></i>
+                Verified by EcoVend Payments India.
               </p>
             </div>
           </div>
           
           <div className="mt-8 p-6 bg-blue-50 rounded-2xl border border-blue-100 flex items-start gap-4">
              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm shrink-0">
-                <i className="fa-solid fa-bolt"></i>
+                <i className="fa-solid fa-indian-rupee-sign"></i>
              </div>
              <div>
-                <h4 className="font-bold text-blue-900">Instant Online Transactions</h4>
+                <h4 className="font-bold text-blue-900">UPI Instant Transfer</h4>
                 <p className="text-sm text-blue-800 opacity-80 mt-1">
-                  Once converted, you can use your balance directly in integrated food apps and online malls using your EcoVend ID at checkout.
+                  Once you confirm, the amount is usually credited to your linked UPI ID within 5-10 minutes. Use it for snacks, chai, or mobile recharges!
                 </p>
              </div>
           </div>
