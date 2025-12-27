@@ -11,6 +11,7 @@ import Shop from './pages/Shop';
 import History from './pages/History';
 import Landing from './pages/Landing';
 import { User, Activity, ActivityType, RecycleCategory } from './types';
+import { COINS_PER_RUPEE } from './constants';
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -156,7 +157,7 @@ const App: React.FC = () => {
   const handleCashOut = (coins: number, method: string) => {
     if (!currentUser || currentUser.balance < coins) return false;
 
-    const cashValue = coins * 1.0;
+    const cashValue = coins / COINS_PER_RUPEE;
     const newActivity: Activity = {
       id: Math.random().toString(36).substr(2, 9),
       type: 'CASH_OUT',
@@ -225,7 +226,7 @@ const App: React.FC = () => {
           } />
           <Route path="/recycle" element={<Recycle onComplete={(name, cat, coins) => addRecycleActivity(name, cat as RecycleCategory, coins)} />} />
           <Route path="/shop" element={<Shop balance={currentUser.balance} onPurchase={handlePurchase} />} />
-          <Route path="/wallet" element={<Wallet balance={currentUser.balance} onCashOut={handleCashOut} />} />
+          <Route path="/wallet" element={<Wallet balance={currentUser.balance} onCashOut={handleCashOut} activities={currentUser.activities} />} />
           <Route path="/rewards" element={<Rewards balance={currentUser.balance} onRedeem={(cost, provider) => addRedeemActivity(provider, cost)} />} />
           <Route path="/history" element={<History activities={currentUser.activities} />} />
           <Route path="*" element={<Navigate to="/" />} />

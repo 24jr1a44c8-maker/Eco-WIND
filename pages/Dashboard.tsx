@@ -2,7 +2,7 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { User, Activity } from '../types';
-import { CATEGORY_COLORS } from '../constants';
+import { CATEGORY_COLORS, COINS_PER_RUPEE } from '../constants';
 
 interface DashboardProps {
   user: User;
@@ -49,7 +49,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user, history }) => {
           </div>
           <p className="text-xs text-green-600 font-bold mt-3 flex items-center gap-1">
             <i className="fa-solid fa-circle-info"></i>
-            Value: ₹{user.balance.toFixed(2)}
+            Value: ₹{(user.balance / COINS_PER_RUPEE).toFixed(2)}
           </p>
           <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
              <i className="fa-solid fa-coins text-9xl"></i>

@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PRODUCTS } from '../constants';
+import { PRODUCTS, COINS_PER_RUPEE } from '../constants';
 import { Product } from '../types';
 
 interface ShopProps {
@@ -19,8 +19,6 @@ interface FlyingItem {
   y: number;
   icon: string;
 }
-
-const COIN_DISCOUNT_RATE = 1.0; 
 
 const Shop: React.FC<ShopProps> = ({ balance, onPurchase }) => {
   const navigate = useNavigate();
@@ -100,20 +98,20 @@ const Shop: React.FC<ShopProps> = ({ balance, onPurchase }) => {
 
   const cartStats = useMemo(() => {
     const totalCash = cart.reduce((sum, item) => sum + (item.cashPrice * item.quantity), 0);
-    const maxDiscountAllowed = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const maxDiscountAllowedInCoins = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-    return { totalCash, maxDiscountAllowed, itemCount };
+    return { totalCash, maxDiscountAllowedInCoins, itemCount };
   }, [cart]);
 
   useEffect(() => {
-    if (coinsToUse > cartStats.maxDiscountAllowed) {
-      setCoinsToUse(cartStats.maxDiscountAllowed);
+    if (coinsToUse > cartStats.maxDiscountAllowedInCoins) {
+      setCoinsToUse(cartStats.maxDiscountAllowedInCoins);
     }
-  }, [cartStats.maxDiscountAllowed, coinsToUse]);
+  }, [cartStats.maxDiscountAllowedInCoins, coinsToUse]);
 
   const handleBuy = () => {
     if (cart.length === 0) return;
-    const discountValue = coinsToUse * COIN_DISCOUNT_RATE;
+    const discountValue = coinsToUse / COINS_PER_RUPEE;
     setDispensing(true);
     
     const summaryName = cart.map(item => `${item.quantity}x ${item.name}`).join(', ');
@@ -306,7 +304,7 @@ const Shop: React.FC<ShopProps> = ({ balance, onPurchase }) => {
                   <span className="text-lg font-black text-slate-900">₹{product.cashPrice.toFixed(0)}</span>
                   <div className="flex items-center gap-1.5 bg-green-50 px-3 py-1 rounded-xl border border-green-100">
                     <i className="fa-solid fa-coins text-[10px] text-yellow-500"></i>
-                    <span className="text-[10px] font-black text-green-700 uppercase">Save ₹{product.price}</span>
+                    <span className="text-[10px] font-black text-green-700 uppercase">Save ₹{(product.price / COINS_PER_RUPEE).toFixed(0)}</span>
                   </div>
                 </div>
               </div>
@@ -330,7 +328,7 @@ const Shop: React.FC<ShopProps> = ({ balance, onPurchase }) => {
               </div>
               <div>
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5">Total Amount</p>
-                <p className="text-2xl font-black tracking-tighter">₹{(cartStats.totalCash - (coinsToUse * COIN_DISCOUNT_RATE)).toFixed(2)}</p>
+                <p className="text-2xl font-black tracking-tighter">₹{(cartStats.totalCash - (coinsToUse / COINS_PER_RUPEE)).toFixed(2)}</p>
               </div>
             </div>
             <button 
@@ -393,7 +391,7 @@ const Shop: React.FC<ShopProps> = ({ balance, onPurchase }) => {
                   <input 
                     type="range" 
                     min="0" 
-                    max={Math.min(balance, cartStats.maxDiscountAllowed)} 
+                    max={Math.min(balance, cartStats.maxDiscountAllowedInCoins)} 
                     value={coinsToUse}
                     onChange={(e) => setCoinsToUse(parseInt(e.target.value))}
                     className="w-full h-2.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
@@ -412,7 +410,7 @@ const Shop: React.FC<ShopProps> = ({ balance, onPurchase }) => {
                 <div>
                   <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mb-2">Final Amount</p>
                   <div className="flex items-center gap-4">
-                    <span className="text-5xl font-black text-slate-900 tracking-tighter">₹{(cartStats.totalCash - (coinsToUse * COIN_DISCOUNT_RATE)).toFixed(0)}</span>
+                    <span className="text-5xl font-black text-slate-900 tracking-tighter">₹{(cartStats.totalCash - (coinsToUse / COINS_PER_RUPEE)).toFixed(0)}</span>
                     {coinsToUse > 0 && (
                       <span className="text-lg font-black text-slate-300 line-through">₹{cartStats.totalCash.toFixed(0)}</span>
                     )}
@@ -421,7 +419,7 @@ const Shop: React.FC<ShopProps> = ({ balance, onPurchase }) => {
                 <div className="text-right">
                   <p className="text-[10px] text-green-600 font-black uppercase tracking-[0.2em] mb-2">You Saved</p>
                   <div className="bg-green-100 text-green-700 px-4 py-2 rounded-2xl font-black text-lg">
-                    ₹{(coinsToUse * COIN_DISCOUNT_RATE).toFixed(0)}
+                    ₹{(coinsToUse / COINS_PER_RUPEE).toFixed(0)}
                   </div>
                 </div>
               </div>
@@ -436,7 +434,7 @@ const Shop: React.FC<ShopProps> = ({ balance, onPurchase }) => {
                     <div className="w-6 h-6 border-4 border-slate-300 border-t-slate-900 rounded-full animate-spin"></div>
                     VENDING {cartStats.itemCount} ITEMS...
                   </span>
-                ) : `CONFIRM & PAY ₹${(cartStats.totalCash - (coinsToUse * COIN_DISCOUNT_RATE)).toFixed(0)}`}
+                ) : `CONFIRM & PAY ₹${(cartStats.totalCash - (coinsToUse / COINS_PER_RUPEE)).toFixed(0)}`}
               </button>
             </div>
           </div>
