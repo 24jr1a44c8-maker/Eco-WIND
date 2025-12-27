@@ -10,6 +10,8 @@ import Wallet from './pages/Wallet';
 import Shop from './pages/Shop';
 import History from './pages/History';
 import Landing from './pages/Landing';
+import MyVouchers from './pages/MyVouchers';
+import VoucherDetail from './pages/VoucherDetail';
 import { User, Activity, ActivityType, RecycleCategory } from './types';
 import { COINS_PER_RUPEE } from './constants';
 
@@ -135,13 +137,19 @@ const App: React.FC = () => {
   const addRedeemActivity = (provider: string, cost: number) => {
     if (!currentUser || currentUser.balance < cost) return false;
 
+    // Generate random 8-character voucher code
+    const code = Math.random().toString(36).substring(2, 10).toUpperCase();
+    const expiryTimestamp = Date.now() + (30 * 24 * 60 * 60 * 1000); // 30 days from now
+
     const newActivity: Activity = {
       id: Math.random().toString(36).substr(2, 9),
       type: 'REDEEM',
       title: `${provider} Voucher`,
       amount: -cost,
       timestamp: Date.now(),
-      provider
+      provider,
+      code,
+      expiryTimestamp
     };
 
     const updatedUser = {
@@ -228,6 +236,9 @@ const App: React.FC = () => {
           <Route path="/shop" element={<Shop balance={currentUser.balance} onPurchase={handlePurchase} />} />
           <Route path="/wallet" element={<Wallet balance={currentUser.balance} onCashOut={handleCashOut} activities={currentUser.activities} />} />
           <Route path="/rewards" element={<Rewards balance={currentUser.balance} onRedeem={(cost, provider) => addRedeemActivity(provider, cost)} />} />
+          <Route path="/voucher/:id" element={<VoucherDetail activities={currentUser.activities} balance={currentUser.balance} onRedeem={(cost, provider) => addRedeemActivity(provider, cost)} />} />
+          <Route path="/vault/:id" element={<VoucherDetail activities={currentUser.activities} balance={currentUser.balance} onRedeem={(cost, provider) => addRedeemActivity(provider, cost)} />} />
+          <Route path="/my-vouchers" element={<MyVouchers activities={currentUser.activities} />} />
           <Route path="/history" element={<History activities={currentUser.activities} />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

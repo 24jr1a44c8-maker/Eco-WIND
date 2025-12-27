@@ -37,24 +37,26 @@ const History: React.FC<HistoryProps> = ({ activities }) => {
   }, [activities, typeFilter, dateFilter]);
 
   return (
-    <div className="max-w-5xl mx-auto animate-in fade-in duration-500">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-800">Recycling Log</h1>
-        <p className="text-slate-500 mt-2">History of your contributions and earned rewards.</p>
+    <div className="max-w-6xl mx-auto px-4 md:px-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Header */}
+      <div className="mb-10">
+        <h1 className="text-4xl font-black text-[#1e293b] tracking-tight">Recycling Log</h1>
+        <p className="text-slate-400 font-medium mt-2">History of your contributions and earned rewards.</p>
       </div>
 
-      {/* Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
-        <div className="flex-1 bg-white p-2 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <span className="text-[10px] font-bold text-slate-400 uppercase px-3 whitespace-nowrap">Filter:</span>
-          {(['ALL', 'RECYCLE', 'REDEEM', 'CASH_OUT', 'PURCHASE'] as const).map((type) => (
+      {/* Split Filter Bar */}
+      <div className="flex flex-col lg:flex-row gap-4 mb-10 items-center justify-start">
+        {/* Left Filter Block */}
+        <div className="bg-white/50 backdrop-blur-sm p-1.5 rounded-[1.5rem] border border-slate-100 shadow-sm flex items-center gap-1 overflow-x-auto no-scrollbar w-full lg:w-auto">
+          <span className="text-[10px] font-black text-slate-300 uppercase px-4 tracking-widest whitespace-nowrap">FILTER:</span>
+          {(['ALL', 'RECYCLE', 'REDEEM', 'CASH_OUT'] as const).map((type) => (
             <button
               key={type}
               onClick={() => setTypeFilter(type)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+              className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all whitespace-nowrap ${
                 typeFilter === type
-                  ? 'bg-green-600 text-white shadow-md shadow-green-100'
-                  : 'text-slate-500 hover:bg-slate-50'
+                  ? 'bg-[#dcfce7] text-[#166534] shadow-sm ring-1 ring-[#bbf7d0]'
+                  : 'text-slate-400 hover:text-slate-600'
               }`}
             >
               {type === 'ALL' ? 'Everything' : type.replace('_', ' ')}
@@ -62,16 +64,17 @@ const History: React.FC<HistoryProps> = ({ activities }) => {
           ))}
         </div>
 
-        <div className="bg-white p-2 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <span className="text-[10px] font-bold text-slate-400 uppercase px-3 whitespace-nowrap">Time:</span>
+        {/* Right Filter Block */}
+        <div className="bg-white/50 backdrop-blur-sm p-1.5 rounded-[1.5rem] border border-slate-100 shadow-sm flex items-center gap-1 overflow-x-auto no-scrollbar w-full lg:w-auto">
+          <span className="text-[10px] font-black text-slate-300 uppercase px-4 tracking-widest whitespace-nowrap">TIME:</span>
           {(['all', 'today', 'week', 'month'] as const).map((range) => (
             <button
               key={range}
               onClick={() => setDateFilter(range)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+              className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all whitespace-nowrap ${
                 dateFilter === range
-                  ? 'bg-slate-800 text-white shadow-md'
-                  : 'text-slate-500 hover:bg-slate-50'
+                  ? 'bg-[#1e293b] text-white shadow-lg'
+                  : 'text-slate-400 hover:text-slate-600'
               }`}
             >
               {range.charAt(0).toUpperCase() + range.slice(1)}
@@ -80,40 +83,42 @@ const History: React.FC<HistoryProps> = ({ activities }) => {
         </div>
       </div>
 
-      {/* Activity Table */}
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden min-h-[400px]">
-        <div className="overflow-x-auto">
+      {/* Activity Table Container */}
+      <div className="bg-[#f1f5f9]/50 rounded-[2.5rem] p-8 border border-white/40 shadow-inner min-h-[500px] animate-in fade-in zoom-in-95 duration-1000 delay-200">
+        <div className="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 overflow-hidden">
           <table className="w-full text-left border-collapse">
-            <thead className="bg-slate-50 border-b border-slate-100">
-              <tr>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Activity</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Category</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Date & Time</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Value</th>
+            <thead>
+              <tr className="border-b border-slate-50">
+                <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Activity</th>
+                <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Category</th>
+                <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Date & Time</th>
+                <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Value</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {filteredActivities.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-32 text-center text-slate-400">
-                    <div className="flex flex-col items-center">
-                      <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                        <i className="fa-solid fa-clock-rotate-left text-2xl opacity-20"></i>
-                      </div>
-                      <p className="font-semibold text-slate-500">No transactions found</p>
+                  <td colSpan={4} className="px-8 py-32 text-center">
+                    <div className="flex flex-col items-center opacity-20">
+                      <i className="fa-solid fa-clock-rotate-left text-6xl mb-6"></i>
+                      <p className="font-black uppercase tracking-widest">Zero entries found</p>
                     </div>
                   </td>
                 </tr>
               ) : (
-                filteredActivities.map((activity) => (
-                  <tr key={activity.id} className="hover:bg-slate-50 transition-colors group">
-                    <td className="px-6 py-5">
-                      <div className="flex items-center gap-3">
-                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm transition-transform group-hover:scale-110 ${
-                           activity.type === 'RECYCLE' ? 'bg-green-100 text-green-600' : 
-                           activity.type === 'REDEEM' ? 'bg-blue-100 text-blue-600' :
-                           activity.type === 'PURCHASE' ? 'bg-slate-800 text-white' :
-                           'bg-amber-100 text-amber-600'
+                filteredActivities.map((activity, index) => (
+                  <tr 
+                    key={activity.id} 
+                    className="hover:bg-slate-50/50 transition-all group animate-in slide-in-from-left-4 fade-in duration-500"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <td className="px-8 py-6">
+                      <div className="flex items-center gap-5">
+                         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-lg transition-transform group-hover:scale-110 shadow-sm ${
+                           activity.type === 'RECYCLE' ? 'bg-[#dcfce7] text-[#166534]' : 
+                           activity.type === 'REDEEM' ? 'bg-blue-50 text-blue-600' :
+                           activity.type === 'PURCHASE' ? 'bg-slate-900 text-white' :
+                           'bg-amber-50 text-amber-600'
                          }`}>
                             <i className={`fa-solid ${
                               activity.type === 'RECYCLE' ? 'fa-recycle' : 
@@ -122,36 +127,30 @@ const History: React.FC<HistoryProps> = ({ activities }) => {
                               'fa-wallet'
                             }`}></i>
                          </div>
-                         <div>
-                            <span className="font-bold text-slate-800 block text-sm">{activity.title}</span>
-                            {activity.currencyAmount && (
-                               <span className="text-[10px] text-green-600 font-bold bg-green-50 px-1.5 py-0.5 rounded uppercase tracking-tighter">Value: ₹{activity.currencyAmount.toFixed(2)}</span>
-                            )}
-                         </div>
+                         <span className="font-bold text-[#1e293b] text-base tracking-tight">{activity.title}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-5">
-                      <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-tight ${
+                    <td className="px-8 py-6">
+                      <span className={`text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm ring-1 ring-inset ring-slate-100 ${
                         activity.type === 'RECYCLE' && activity.category ? CATEGORY_COLORS[activity.category] : 
-                        activity.type === 'CASH_OUT' ? 'bg-amber-100 text-amber-700' :
-                        activity.type === 'PURCHASE' ? 'bg-slate-100 text-slate-800' :
-                        'bg-slate-100 text-slate-500'
+                        activity.type === 'CASH_OUT' ? 'bg-amber-50 text-amber-700' :
+                        'bg-slate-50 text-slate-400'
                       }`}>
-                        {activity.type === 'RECYCLE' ? activity.category : activity.type === 'CASH_OUT' ? 'MONEY' : activity.type === 'PURCHASE' ? 'STORE' : 'REWARD'}
+                        {activity.type === 'RECYCLE' ? activity.category : activity.type === 'CASH_OUT' ? 'CASH' : activity.type}
                       </span>
                     </td>
-                    <td className="px-6 py-5">
-                      <div className="text-sm text-slate-600 font-medium">
-                        {new Date(activity.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                    <td className="px-8 py-6">
+                      <div className="text-sm text-[#475569] font-bold">
+                        {new Date(activity.timestamp).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
                       </div>
-                      <div className="text-[10px] text-slate-400 font-bold uppercase">
-                        {new Date(activity.timestamp).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                      <div className="text-[10px] text-slate-300 font-black uppercase tracking-widest mt-1">
+                        {new Date(activity.timestamp).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false })}
                       </div>
                     </td>
-                    <td className="px-6 py-5 text-right">
-                      <div className={`flex items-center justify-end gap-1.5 font-black text-base ${activity.amount > 0 ? 'text-green-600' : 'text-slate-500'}`}>
+                    <td className="px-8 py-6 text-right">
+                      <div className={`flex items-center justify-end gap-2 font-black text-lg ${activity.amount > 0 ? 'text-[#16a34a]' : 'text-slate-400'}`}>
                         {activity.amount > 0 ? '+' : ''}{activity.amount}
-                        <i className="fa-solid fa-coins text-[10px] text-yellow-500"></i>
+                        <i className="fa-solid fa-coins text-[10px] text-yellow-500 shadow-sm"></i>
                       </div>
                     </td>
                   </tr>

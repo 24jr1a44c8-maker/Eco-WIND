@@ -11,7 +11,13 @@ export const VOUCHERS: Voucher[] = [
     cost: 250 * COINS_PER_RUPEE,
     category: 'FOOD',
     image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=400',
-    description: '₹250 Food Delivery Credit'
+    description: '₹250 Food Delivery Credit',
+    terms: [
+      'Valid on all restaurant orders.',
+      'Cannot be combined with other promo codes.',
+      'Voucher expires 30 days after redemption.',
+      'Applicable on Swiggy app and website.'
+    ]
   },
   {
     id: 'v2',
@@ -20,7 +26,13 @@ export const VOUCHERS: Voucher[] = [
     cost: 500 * COINS_PER_RUPEE,
     category: 'SHOPPING',
     image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=400',
-    description: '₹500 Online Shopping Voucher'
+    description: '₹500 Online Shopping Voucher',
+    terms: [
+      'Add to Amazon Pay balance to use.',
+      'Valid on all products except gift cards.',
+      'Balance never expires once added to account.',
+      'Non-refundable and non-transferable.'
+    ]
   },
   {
     id: 'v3',
@@ -29,7 +41,13 @@ export const VOUCHERS: Voucher[] = [
     cost: 300 * COINS_PER_RUPEE,
     category: 'FOOD',
     image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=400',
-    description: '₹300 Restaurant Dining Voucher'
+    description: '₹300 Restaurant Dining Voucher',
+    terms: [
+      'Valid on Zomato Gold and regular dining.',
+      'Applicable on total bill value.',
+      'One voucher per table.',
+      'Must be presented at the time of placing order.'
+    ]
   }
 ];
 

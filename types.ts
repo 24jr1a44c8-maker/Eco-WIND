@@ -19,6 +19,8 @@ export interface Activity {
   category?: RecycleCategory; // for recycle
   provider?: string; // for redeem/cashout/purchase
   currencyAmount?: number; // The converted cash value or discount saved
+  expiryTimestamp?: number; // For redeemed vouchers
+  code?: string; // For redeemed vouchers
 }
 
 export interface Product {
@@ -48,6 +50,7 @@ export interface Voucher {
   category: 'FOOD' | 'SHOPPING' | 'MALL';
   image: string;
   description: string;
+  terms?: string[];
 }
 
 export interface UserState {
