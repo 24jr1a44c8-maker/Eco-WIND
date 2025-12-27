@@ -1,143 +1,193 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface LandingProps {
   onSelect: (choice: 'SHOP' | 'RECYCLE') => void;
 }
 
 const Landing: React.FC<LandingProps> = ({ onSelect }) => {
+  const [booting, setBooting] = useState(true);
+  const [bootProgress, setBootProgress] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setBootProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(timer);
+          setTimeout(() => setBooting(false), 500);
+          return 100;
+        }
+        return prev + 2;
+      });
+    }, 20);
+    return () => clearInterval(timer);
+  }, []);
+
+  if (booting) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-12 overflow-hidden font-mono">
+        <div className="max-w-md w-full">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center text-black animate-pulse">
+              <i className="fa-solid fa-microchip"></i>
+            </div>
+            <div>
+              <h2 className="text-green-500 text-xl font-bold tracking-tighter uppercase">EcoVend OS v4.0.1</h2>
+              <p className="text-green-900 text-[10px] font-bold">KERNEL INITIALIZATION...</p>
+            </div>
+          </div>
+          
+          <div className="space-y-2 mb-10">
+            <div className="flex justify-between text-[10px] text-green-700 font-bold uppercase tracking-widest">
+              <span>System Integrity</span>
+              <span>{bootProgress}%</span>
+            </div>
+            <div className="h-1 bg-green-950 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-green-500 transition-all duration-100 ease-linear shadow-[0_0_10px_rgba(34,197,94,0.5)]" 
+                style={{ width: `${bootProgress}%` }}
+              ></div>
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <p className="text-[9px] text-green-900 leading-none">CHECKING SENSORS... OK</p>
+            <p className="text-[9px] text-green-900 leading-none">AI CORE SYNCING... OK</p>
+            <p className="text-[9px] text-green-900 leading-none">VENDING MOTORS... OK</p>
+            <p className="text-[9px] text-green-800 leading-none mt-2 animate-pulse">READY FOR USER INPUT</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center p-0 m-0 overflow-hidden font-sans select-none relative">
-      {/* Background Ambience */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-600/10 blur-[180px] rounded-full animate-pulse"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-green-600/10 blur-[180px] rounded-full animate-pulse [animation-delay:2s]"></div>
-        <div className="absolute inset-0 opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+    <div className="min-h-screen bg-[#020202] flex flex-col items-center justify-center p-0 m-0 overflow-hidden font-sans select-none relative animate-in fade-in duration-1000">
+      
+      {/* Dynamic Background Grid */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-20">
+         <div className="absolute inset-0 bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
+         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-500/10 blur-[150px] rounded-full animate-pulse"></div>
       </div>
 
-      {/* Hero Header */}
-      <div className="absolute top-12 left-1/2 -translate-x-1/2 z-50 text-center w-full pointer-events-none">
-        <div className="inline-flex flex-col items-center gap-2 px-10 py-6 bg-white/5 backdrop-blur-2xl rounded-[3rem] border border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-tr from-green-500 to-emerald-400 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-green-500/20">
-              <i className="fa-solid fa-leaf text-3xl"></i>
+      {/* Main Container */}
+      <div className="flex flex-col md:flex-row w-full h-screen relative z-10">
+        
+        {/* SHOP MODE (VENDING MACHINE) */}
+        <div 
+          onClick={() => onSelect('SHOP')}
+          className="relative flex-1 group cursor-pointer overflow-hidden transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] hover:flex-[1.5] border-b md:border-b-0 md:border-r border-white/5"
+        >
+          {/* Visual Ambiance */}
+          <div className="absolute inset-0 bg-slate-950 transition-colors duration-1000 group-hover:bg-blue-600/10"></div>
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.2)_0%,transparent_70%)]"></div>
+          
+          {/* Animated Element Stack */}
+          <div className="relative h-full flex flex-col items-center justify-center p-12 text-center">
+            <div className="mb-12 relative">
+               <div className="w-32 h-32 bg-slate-900 border-2 border-white/5 rounded-[3rem] flex items-center justify-center text-blue-500 text-5xl group-hover:text-white group-hover:bg-blue-600 group-hover:scale-110 group-hover:rotate-3 transition-all duration-700 shadow-2xl relative z-20">
+                  <i className="fa-solid fa-cart-shopping"></i>
+               </div>
+               {/* Background Glow */}
+               <div className="absolute inset-0 bg-blue-500/0 group-hover:bg-blue-500/40 blur-3xl rounded-full transition-all duration-700 scale-150"></div>
+               {/* Floating Snack Icons */}
+               <i className="fa-solid fa-cookie-bite absolute -top-10 -right-10 text-4xl text-blue-900 opacity-0 group-hover:opacity-100 transition-all duration-1000 delay-100 group-hover:translate-x-4 group-hover:-translate-y-4"></i>
+               <i className="fa-solid fa-bottle-water absolute -bottom-10 -left-10 text-4xl text-blue-900 opacity-0 group-hover:opacity-100 transition-all duration-1000 delay-200 group-hover:-translate-x-4 group-hover:translate-y-4"></i>
             </div>
-            <div className="text-left">
-              <h1 className="text-3xl font-black text-white tracking-tighter uppercase leading-none italic">EcoVend <span className="text-green-500">AI</span></h1>
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mt-1 block">The Future of Vending</span>
+
+            <div className="space-y-4 mb-10">
+               <p className="text-blue-500/60 font-black text-xs uppercase tracking-[0.5em] group-hover:text-blue-400 transition-colors">Digital Kiosk</p>
+               <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter uppercase italic leading-none group-hover:scale-105 transition-transform duration-700">
+                  VENDING<br/><span className="text-blue-600 not-italic">MACHINE</span>
+               </h2>
             </div>
+
+            <p className="text-slate-500 font-bold text-lg max-w-xs group-hover:text-slate-300 transition-colors duration-700">
+              Pick your refreshments & redeem saved coins for discounts.
+            </p>
+
+            <div className="mt-12 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-8 transition-all duration-700">
+               <div className="inline-flex items-center gap-3 bg-white text-black px-10 py-4 rounded-2xl font-black text-lg uppercase tracking-tighter shadow-2xl">
+                  <span>Enter Store</span>
+                  <i className="fa-solid fa-arrow-right-long"></i>
+               </div>
+            </div>
+          </div>
+
+          {/* Side Status Ticker */}
+          <div className="absolute bottom-10 left-10 opacity-20 group-hover:opacity-100 transition-opacity">
+             <div className="flex items-center gap-3 text-[10px] font-black text-blue-500 uppercase tracking-widest">
+                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                Stock Level: Optimal
+             </div>
+          </div>
+        </div>
+
+        {/* RECYCLE MODE (SMART HUB) */}
+        <div 
+          onClick={() => onSelect('RECYCLE')}
+          className="relative flex-1 group cursor-pointer overflow-hidden transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] hover:flex-[1.5]"
+        >
+          {/* Visual Ambiance */}
+          <div className="absolute inset-0 bg-slate-950 transition-colors duration-1000 group-hover:bg-green-600/10"></div>
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 bg-[radial-gradient(circle_at_center,rgba(34,197,94,0.2)_0%,transparent_70%)]"></div>
+
+          {/* Animated Element Stack */}
+          <div className="relative h-full flex flex-col items-center justify-center p-12 text-center">
+            <div className="mb-12 relative">
+               <div className="w-32 h-32 bg-slate-900 border-2 border-white/5 rounded-[3rem] flex items-center justify-center text-green-500 text-5xl group-hover:text-white group-hover:bg-green-600 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-700 shadow-2xl relative z-20">
+                  <i className="fa-solid fa-recycle"></i>
+               </div>
+               {/* Background Glow */}
+               <div className="absolute inset-0 bg-green-500/0 group-hover:bg-green-500/40 blur-3xl rounded-full transition-all duration-700 scale-150"></div>
+               {/* Floating Eco Icons */}
+               <i className="fa-solid fa-leaf absolute -top-10 -left-10 text-4xl text-green-900 opacity-0 group-hover:opacity-100 transition-all duration-1000 delay-100 group-hover:-translate-x-4 group-hover:-translate-y-4"></i>
+               <i className="fa-solid fa-coins absolute -bottom-10 -right-10 text-4xl text-green-900 opacity-0 group-hover:opacity-100 transition-all duration-1000 delay-200 group-hover:translate-x-4 group-hover:translate-y-4"></i>
+            </div>
+
+            <div className="space-y-4 mb-10">
+               <p className="text-green-500/60 font-black text-xs uppercase tracking-[0.5em] group-hover:text-green-400 transition-colors">Sustainable Hub</p>
+               <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter uppercase italic leading-none group-hover:scale-105 transition-transform duration-700">
+                  RECYCLE<br/><span className="text-green-600 not-italic">HUB</span>
+               </h2>
+            </div>
+
+            <p className="text-slate-500 font-bold text-lg max-w-xs group-hover:text-slate-300 transition-colors duration-700">
+              Deposit containers to earn coins. Powered by Real-time Vision AI.
+            </p>
+
+            <div className="mt-12 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-8 transition-all duration-700">
+               <div className="inline-flex items-center gap-3 bg-white text-black px-10 py-4 rounded-2xl font-black text-lg uppercase tracking-tighter shadow-2xl">
+                  <span>Start Recycling</span>
+                  <i className="fa-solid fa-arrow-right-long"></i>
+               </div>
+            </div>
+          </div>
+
+          {/* Side Status Ticker */}
+          <div className="absolute bottom-10 right-10 opacity-20 group-hover:opacity-100 transition-opacity">
+             <div className="flex items-center gap-3 text-[10px] font-black text-green-500 uppercase tracking-widest">
+                AI Recognition: Ready
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+             </div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Floating Header */}
+      <div className="absolute top-10 left-10 z-50 pointer-events-none">
+        <div className="flex items-center gap-4 bg-white/5 backdrop-blur-xl px-6 py-4 rounded-3xl border border-white/10">
+          <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-black">
+            <i className="fa-solid fa-leaf text-xl"></i>
+          </div>
+          <div>
+            <h1 className="text-white font-black uppercase tracking-tighter leading-none text-xl">EcoVend <span className="text-green-500">AI</span></h1>
+            <p className="text-[9px] text-slate-400 uppercase font-bold tracking-[0.3em]">Smart Kiosk Terminal</p>
           </div>
         </div>
       </div>
 
-      {/* Split Mode Selection */}
-      <div className="flex flex-col md:flex-row w-full h-screen">
-        
-        {/* SHOP MODE PANEL (VENDING MACHINE) */}
-        <button 
-          onClick={() => onSelect('SHOP')}
-          className="relative flex-1 group overflow-hidden transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] hover:flex-[1.8] border-b md:border-b-0 md:border-r border-white/5 outline-none"
-        >
-          {/* Visual Layer */}
-          <div className="absolute inset-0 bg-slate-950 transition-colors duration-1000 group-hover:bg-blue-950/40"></div>
-          <div className="absolute inset-0 opacity-20 bg-[linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.8)_100%)]"></div>
-          
-          {/* Animated Icons Background */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] group-hover:opacity-[0.12] transition-opacity duration-1000">
-             <i className="fa-solid fa-cookie-bite absolute top-1/4 left-1/4 text-8xl -rotate-12 group-hover:scale-125 transition-transform duration-1000"></i>
-             <i className="fa-solid fa-bottle-water absolute bottom-1/4 right-1/4 text-[18rem] rotate-12 group-hover:scale-110 transition-transform duration-1000"></i>
-             <i className="fa-solid fa-store absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[45rem] opacity-10"></i>
-          </div>
-
-          {/* Interactive Content */}
-          <div className="relative h-full flex flex-col items-center justify-center p-12 text-center z-10 pt-32 md:pt-12">
-            <div className="w-36 h-36 bg-blue-600 rounded-[3.5rem] flex items-center justify-center text-white text-6xl mb-10 shadow-[0_0_60px_rgba(37,99,235,0.4)] group-hover:scale-110 group-hover:rotate-6 transition-all duration-700 relative">
-              <i className="fa-solid fa-cart-shopping"></i>
-              <div className="absolute -top-4 -right-4 bg-white text-blue-600 text-[10px] font-black px-4 py-2 rounded-full shadow-xl">OPEN</div>
-            </div>
-            
-            <div className="space-y-2 mb-8">
-              <span className="text-blue-400 font-black text-xs uppercase tracking-[0.5em] opacity-70 group-hover:opacity-100 transition-opacity">Select Mode</span>
-              <h2 className="text-6xl md:text-8xl font-black text-white tracking-tighter uppercase italic leading-none">
-                VENDING <span className="text-blue-500 block not-italic mt-2">MACHINE</span>
-              </h2>
-            </div>
-            
-            <p className="text-blue-200/40 font-bold text-xl max-w-sm mx-auto uppercase tracking-wide leading-tight group-hover:text-blue-100 transition-colors duration-500">
-              Refreshments & Quick Bites<br/>
-              <span className="text-blue-500/80">Redeem coins for instant discounts</span>
-            </p>
-
-            <div className="mt-16 h-20 overflow-hidden">
-               <div className="bg-white text-blue-950 px-16 py-6 rounded-[2.5rem] font-black text-2xl shadow-2xl transition-all duration-700 transform translate-y-32 group-hover:translate-y-0 uppercase tracking-tighter flex items-center gap-4 hover:bg-blue-600 hover:text-white">
-                  <span>Start Shopping</span>
-                  <i className="fa-solid fa-arrow-right-long text-lg"></i>
-               </div>
-            </div>
-          </div>
-
-          {/* Glowing Border Hover */}
-          <div className="absolute bottom-0 left-0 right-0 h-3 bg-blue-500 opacity-0 group-hover:opacity-100 transition-all duration-700 shadow-[0_-15px_40px_rgba(59,130,246,0.6)]"></div>
-        </button>
-
-        {/* RECYCLE MODE PANEL (RECYCLE HUB) */}
-        <button 
-          onClick={() => onSelect('RECYCLE')}
-          className="relative flex-1 group overflow-hidden transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] hover:flex-[1.8] outline-none"
-        >
-          {/* Visual Layer */}
-          <div className="absolute inset-0 bg-slate-950 transition-colors duration-1000 group-hover:bg-green-950/40"></div>
-          <div className="absolute inset-0 opacity-20 bg-[linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.8)_100%)]"></div>
-          
-          {/* Animated Icons Background */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] group-hover:opacity-[0.12] transition-opacity duration-1000">
-             <i className="fa-solid fa-recycle absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[45rem] opacity-10"></i>
-             <i className="fa-solid fa-leaf absolute top-1/3 right-1/4 text-9xl rotate-12 group-hover:scale-125 transition-transform duration-1000"></i>
-             <i className="fa-solid fa-coins absolute bottom-1/4 left-1/4 text-[12rem] -rotate-12 group-hover:scale-110 transition-transform duration-1000"></i>
-          </div>
-
-          {/* Interactive Content */}
-          <div className="relative h-full flex flex-col items-center justify-center p-12 text-center z-10 pt-32 md:pt-12">
-            <div className="w-36 h-36 bg-green-500 rounded-[3.5rem] flex items-center justify-center text-white text-6xl mb-10 shadow-[0_0_60px_rgba(34,197,94,0.4)] group-hover:scale-110 group-hover:-rotate-6 transition-all duration-700 relative">
-              <i className="fa-solid fa-recycle"></i>
-              <div className="absolute -top-4 -right-4 bg-white text-green-600 text-[10px] font-black px-4 py-2 rounded-full shadow-xl">ACTIVE</div>
-            </div>
-            
-            <div className="space-y-2 mb-8">
-              <span className="text-green-400 font-black text-xs uppercase tracking-[0.5em] opacity-70 group-hover:opacity-100 transition-opacity">Select Mode</span>
-              <h2 className="text-6xl md:text-8xl font-black text-white tracking-tighter uppercase italic leading-none">
-                RECYCLE <span className="text-green-500 block not-italic mt-2">HUB</span>
-              </h2>
-            </div>
-            
-            <p className="text-green-200/40 font-bold text-xl max-w-sm mx-auto uppercase tracking-wide leading-tight group-hover:text-green-100 transition-colors duration-500">
-              Deposit Plastic, Metal & Glass<br/>
-              <span className="text-green-400/80">Earn digital coins instantly</span>
-            </p>
-
-            <div className="mt-16 h-20 overflow-hidden">
-               <div className="bg-white text-green-950 px-16 py-6 rounded-[2.5rem] font-black text-2xl shadow-2xl transition-all duration-700 transform translate-y-32 group-hover:translate-y-0 uppercase tracking-tighter flex items-center gap-4 hover:bg-green-600 hover:text-white">
-                  <span>Start Recycling</span>
-                  <i className="fa-solid fa-arrow-right-long text-lg"></i>
-               </div>
-            </div>
-          </div>
-
-          {/* Glowing Border Hover */}
-          <div className="absolute bottom-0 left-0 right-0 h-3 bg-green-500 opacity-0 group-hover:opacity-100 transition-all duration-700 shadow-[0_-15px_40px_rgba(34,197,94,0.6)]"></div>
-        </button>
-
-      </div>
-
-      {/* Footer Instruction */}
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-50 animate-bounce">
-         <div className="flex flex-col items-center gap-4">
-            <div className="w-12 h-12 rounded-full border-2 border-white/20 flex items-center justify-center text-white">
-               <i className="fa-solid fa-hand-pointer opacity-50"></i>
-            </div>
-            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.5em]">Tap to Choose Your Journey</p>
-         </div>
-      </div>
     </div>
   );
 };
