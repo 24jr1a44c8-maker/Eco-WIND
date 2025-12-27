@@ -86,6 +86,16 @@ const Recycle: React.FC<RecycleProps> = ({ onComplete }) => {
 
   return (
     <div className="max-w-2xl mx-auto flex flex-col items-center">
+      <style>{`
+        @keyframes pulse-grow {
+          0%, 100% { transform: scale(1); box-shadow: 0 10px 15px -3px rgba(34, 197, 94, 0.2), 0 4px 6px -2px rgba(34, 197, 94, 0.1); }
+          50% { transform: scale(1.04); box-shadow: 0 20px 25px -5px rgba(34, 197, 94, 0.3), 0 10px 10px -5px rgba(34, 197, 94, 0.1); }
+        }
+        .animate-pulse-grow {
+          animation: pulse-grow 2s ease-in-out infinite;
+        }
+      `}</style>
+
       <div className="w-full mb-6">
         <h1 className="text-2xl font-bold text-slate-800">Smart Scanner</h1>
         <p className="text-slate-500">Hold the item in front of the camera</p>
@@ -174,7 +184,7 @@ const Recycle: React.FC<RecycleProps> = ({ onComplete }) => {
             </button>
             <button 
               onClick={handleConfirm}
-              className="flex-[2] py-4 px-6 rounded-2xl font-bold bg-green-600 text-white shadow-lg shadow-green-200 hover:bg-green-700 transition-all"
+              className="flex-[2] py-4 px-6 rounded-2xl font-bold bg-green-600 text-white shadow-lg shadow-green-200 hover:bg-green-700 transition-all animate-pulse-grow"
             >
               Deposit & Earn
             </button>
