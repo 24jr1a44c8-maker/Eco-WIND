@@ -157,6 +157,25 @@ const Shop: React.FC<ShopProps> = ({ balance, onPurchase }) => {
   return (
     <div className="max-w-6xl mx-auto animate-in fade-in duration-500 pb-32 relative">
       
+      {/* BACKGROUND ANIMATION BLOCK */}
+      <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden opacity-30">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent shadow-[0_0_15px_rgba(59,130,246,0.3)] animate-vending-scan"></div>
+        {[...Array(6)].map((_, i) => (
+          <div 
+            key={i} 
+            className="absolute rounded-full bg-blue-400/10 blur-2xl animate-vending-float"
+            style={{
+              width: `${Math.random() * 300 + 100}px`,
+              height: `${Math.random() * 300 + 100}px`,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${i * 2}s`,
+              animationDuration: `${15 + Math.random() * 10}s`
+            }}
+          ></div>
+        ))}
+      </div>
+
       {/* Flying Particle Overlay */}
       <div className="fixed inset-0 pointer-events-none z-[9999]">
         {flyingItems.map(item => (
@@ -181,8 +200,25 @@ const Shop: React.FC<ShopProps> = ({ balance, onPurchase }) => {
           20% { transform: scale(1.2) translate(0, -20px); opacity: 1; }
           100% { transform: scale(0.2) translate(var(--target-x), var(--target-y)); opacity: 0; }
         }
+        @keyframes vending-scan {
+          0% { transform: translateY(-10vh); opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { transform: translateY(110vh); opacity: 0; }
+        }
+        @keyframes vending-float {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
         .animate-flying-particle {
           animation: flying-particle 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .animate-vending-scan {
+          animation: vending-scan 4s linear infinite;
+        }
+        .animate-vending-float {
+          animation: vending-float infinite ease-in-out;
         }
       `}</style>
 

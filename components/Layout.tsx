@@ -73,7 +73,7 @@ const Layout: React.FC<{ children: React.ReactNode, balance: number, email: stri
             <div className="flex items-center gap-3 relative z-10">
               <i className={`fa-solid fa-coins text-yellow-400 text-xl transition-transform duration-700 ${shouldAnimate ? 'rotate-[360deg]' : ''}`}></i>
               <span className="text-3xl font-black tracking-tighter">{balance}</span>
-              <span className="text-sm font-bold opacity-60">coins</span>
+              <span className="text-sm font-bold opacity-60 ml-1">coins</span>
             </div>
             {/* Soft decorative glow */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:scale-110 transition-transform"></div>

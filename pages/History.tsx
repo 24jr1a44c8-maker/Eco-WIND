@@ -45,27 +45,37 @@ const History: React.FC<HistoryProps> = ({ activities }) => {
       </div>
 
       {/* Split Filter Bar */}
-      <div className="flex flex-col lg:flex-row gap-4 mb-10 items-center justify-start">
-        {/* Left Filter Block */}
-        <div className="bg-white/50 backdrop-blur-sm p-1.5 rounded-[1.5rem] border border-slate-100 shadow-sm flex items-center gap-1 overflow-x-auto no-scrollbar w-full lg:w-auto">
+      <div className="flex flex-col lg:flex-row gap-6 mb-12 items-center justify-start">
+        {/* Left Filter Block: TYPE */}
+        <div className="bg-white p-1.5 rounded-[1.5rem] border border-slate-100 shadow-sm flex items-center gap-1 overflow-x-auto no-scrollbar w-full lg:w-auto">
           <span className="text-[10px] font-black text-slate-300 uppercase px-4 tracking-widest whitespace-nowrap">FILTER:</span>
-          {(['ALL', 'RECYCLE', 'REDEEM', 'CASH_OUT'] as const).map((type) => (
+          <button
+            onClick={() => setTypeFilter('ALL')}
+            className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all whitespace-nowrap ${
+              typeFilter === 'ALL'
+                ? 'bg-[#dcfce7] text-[#166534] shadow-sm ring-1 ring-[#bbf7d0] border border-[#bbf7d0]'
+                : 'text-slate-400 hover:text-slate-600'
+            }`}
+          >
+            Everything
+          </button>
+          {(['RECYCLE', 'REDEEM', 'CASH_OUT'] as const).map((type) => (
             <button
               key={type}
               onClick={() => setTypeFilter(type)}
               className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all whitespace-nowrap ${
                 typeFilter === type
-                  ? 'bg-[#dcfce7] text-[#166534] shadow-sm ring-1 ring-[#bbf7d0]'
+                  ? 'bg-slate-100 text-slate-900 shadow-sm'
                   : 'text-slate-400 hover:text-slate-600'
               }`}
             >
-              {type === 'ALL' ? 'Everything' : type.replace('_', ' ')}
+              {type.replace('_', ' ')}
             </button>
           ))}
         </div>
 
-        {/* Right Filter Block */}
-        <div className="bg-white/50 backdrop-blur-sm p-1.5 rounded-[1.5rem] border border-slate-100 shadow-sm flex items-center gap-1 overflow-x-auto no-scrollbar w-full lg:w-auto">
+        {/* Right Filter Block: TIME */}
+        <div className="bg-white p-1.5 rounded-[1.5rem] border border-slate-100 shadow-sm flex items-center gap-1 overflow-x-auto no-scrollbar w-full lg:w-auto">
           <span className="text-[10px] font-black text-slate-300 uppercase px-4 tracking-widest whitespace-nowrap">TIME:</span>
           {(['all', 'today', 'week', 'month'] as const).map((range) => (
             <button
@@ -84,7 +94,7 @@ const History: React.FC<HistoryProps> = ({ activities }) => {
       </div>
 
       {/* Activity Table Container */}
-      <div className="bg-[#f1f5f9]/50 rounded-[2.5rem] p-8 border border-white/40 shadow-inner min-h-[500px] animate-in fade-in zoom-in-95 duration-1000 delay-200">
+      <div className="bg-[#f1f5f9]/60 rounded-[2.5rem] p-8 border border-white/40 shadow-inner min-h-[500px] animate-in fade-in zoom-in-95 duration-1000 delay-200">
         <div className="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 overflow-hidden">
           <table className="w-full text-left border-collapse">
             <thead>
