@@ -36,7 +36,7 @@ const Recycle: React.FC<RecycleProps> = ({ onComplete }) => {
         };
       }
     } catch (err) {
-      setError("Unable to access camera. Please check your browser permissions.");
+      setError("Unable to access camera. Please allow camera permissions in your browser settings.");
     }
   }, []);
 
@@ -59,13 +59,6 @@ const Recycle: React.FC<RecycleProps> = ({ onComplete }) => {
     const canvas = canvasRef.current;
     const video = videoRef.current;
     
-    // Ensure we have actual dimensions before capturing
-    if (video.videoWidth === 0 || video.videoHeight === 0) {
-      setError("Camera is still warming up. Please wait a second.");
-      setIsProcessing(false);
-      return;
-    }
-
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext('2d');
@@ -75,18 +68,14 @@ const Recycle: React.FC<RecycleProps> = ({ onComplete }) => {
       const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
       const base64Image = dataUrl.split(',')[1];
 
-      if (!base64Image || base64Image.length < 100) {
-        setError("Failed to capture a clear image. Please try again.");
-        setIsProcessing(false);
-        return;
-      }
-
       try {
         const aiResult = await identifyRecyclable(base64Image);
         setResult(aiResult);
       } catch (err: any) {
-        setError(err.message || "AI Analysis failed. Please check your internet connection.");
-        console.error("Analysis failure:", err);
+        // If it's a configuration error, we want to show the full detail
+        const msg = err.message || "Analysis failed due to a system error.";
+        setError(msg);
+        console.error("Recycle Page Error:", err);
       } finally {
         setIsProcessing(false);
       }
@@ -118,18 +107,18 @@ const Recycle: React.FC<RecycleProps> = ({ onComplete }) => {
       `}</style>
 
       <div className="w-full mb-6 text-center md:text-left">
-        <h1 className="text-3xl font-black text-slate-900 tracking-tighter italic uppercase">AI <span className="text-green-600">Scanner</span></h1>
-        <p className="text-slate-500 font-medium">Position your item clearly within the frame.</p>
+        <h1 className="text-3xl font-black text-slate-900 tracking-tighter italic uppercase">Eco <span className="text-green-600">Scanner</span></h1>
+        <p className="text-slate-500 font-medium">Verify your item for recycling rewards.</p>
       </div>
 
-      <div className="relative w-full aspect-[4/3] bg-slate-950 rounded-[3rem] overflow-hidden shadow-2xl border-[12px] border-white ring-1 ring-slate-100">
+      <div className="relative w-full aspect-[4/3] bg-slate-950 rounded-[3rem] overflow-hidden shadow-2xl border-[10px] border-white ring-1 ring-slate-100">
         {!result && (
           <video 
             ref={videoRef} 
             autoPlay 
             playsInline 
             muted 
-            className={`w-full h-full object-cover transition-opacity duration-1000 ${isCameraReady ? 'opacity-100' : 'opacity-30'}`}
+            className={`w-full h-full object-cover transition-opacity duration-700 ${isCameraReady ? 'opacity-100' : 'opacity-20'}`}
           />
         )}
         
@@ -141,17 +130,17 @@ const Recycle: React.FC<RecycleProps> = ({ onComplete }) => {
         )}
 
         {!isCameraReady && !error && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-white/50">
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-white/40">
              <i className="fa-solid fa-spinner animate-spin text-3xl mb-4"></i>
-             <p className="text-xs font-black uppercase tracking-widest">Waking up Camera...</p>
+             <p className="text-[10px] font-black uppercase tracking-widest">Warming Up...</p>
           </div>
         )}
 
         {isProcessing && (
           <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center text-white z-20">
-            <div className="w-20 h-20 border-4 border-green-500 border-t-transparent rounded-full animate-spin mb-6 shadow-[0_0_30px_rgba(34,197,94,0.3)]"></div>
-            <p className="text-2xl font-black italic tracking-tighter uppercase">Analyzing Material</p>
-            <p className="text-xs font-bold text-white/40 mt-3 tracking-widest uppercase">Consulting Gemini AI...</p>
+            <div className="w-20 h-20 border-4 border-green-500 border-t-transparent rounded-full animate-spin mb-6"></div>
+            <p className="text-2xl font-black italic tracking-tighter uppercase">Analyzing...</p>
+            <p className="text-[10px] font-bold text-white/40 mt-3 tracking-widest uppercase">Consulting AI Engine</p>
           </div>
         )}
 
@@ -160,29 +149,25 @@ const Recycle: React.FC<RecycleProps> = ({ onComplete }) => {
             <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-6">
               <i className="fa-solid fa-triangle-exclamation text-3xl"></i>
             </div>
-            <p className="text-xl font-black uppercase italic tracking-tighter mb-4">System Error</p>
+            <p className="text-xl font-black uppercase italic tracking-tighter mb-4">Device Error</p>
             <p className="text-sm font-bold opacity-90 mb-10 max-w-xs leading-relaxed">{error}</p>
             <button 
               onClick={handleReset}
-              className="bg-white text-red-600 px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl active:scale-95 transition-all"
+              className="bg-white text-red-600 px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl transition-all active:scale-95"
             >
-              Reset & Try Again
+              Retry
             </button>
           </div>
         )}
 
-        {/* Viewfinder Overlay */}
+        {/* Viewfinder overlay */}
         {!result && !isProcessing && !error && (
            <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 border-2 border-white/20 rounded-[2rem]">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 border-2 border-white/10 rounded-[2.5rem]">
                  <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-green-500 -mt-1 -ml-1 rounded-tl-xl"></div>
                  <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-green-500 -mt-1 -mr-1 rounded-tr-xl"></div>
                  <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-green-500 -mb-1 -ml-1 rounded-bl-xl"></div>
                  <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-green-500 -mb-1 -mr-1 rounded-br-xl"></div>
-              </div>
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-black text-white uppercase tracking-widest border border-white/10">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                AI Processor Online
               </div>
            </div>
         )}
@@ -202,41 +187,22 @@ const Recycle: React.FC<RecycleProps> = ({ onComplete }) => {
                 <i className="fa-solid fa-coins text-yellow-500 text-xl"></i>
                 <span className="text-4xl font-black text-green-600 tracking-tighter">+{result.estimatedValue}</span>
               </div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Deposit Reward</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-6 mb-10">
-            <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black mb-3">Recyclability</p>
-              <div className="flex items-center gap-4">
-                <div className="flex-1 h-3 bg-slate-200 rounded-full overflow-hidden shadow-inner">
-                  <div 
-                    className="h-full bg-gradient-to-r from-green-500 to-emerald-400" 
-                    style={{ width: `${result.recyclabilityScore}%` }}
-                  ></div>
-                </div>
-                <span className="text-lg font-black text-slate-700">{result.recyclabilityScore}%</span>
-              </div>
-            </div>
-            <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black mb-3">AI Match</p>
-              <p className="text-lg font-black text-slate-700">{(result.confidence * 100).toFixed(0)}% Certainty</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Coins</p>
             </div>
           </div>
 
           <div className="flex gap-4">
             <button 
               onClick={handleReset}
-              className="flex-1 py-5 px-8 rounded-2xl font-black text-sm uppercase tracking-widest border-2 border-slate-100 text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-all active:scale-95"
+              className="flex-1 py-5 px-8 rounded-2xl font-black text-sm uppercase tracking-widest border-2 border-slate-100 text-slate-400 hover:bg-slate-50 transition-all active:scale-95"
             >
-              Retake
+              Reset
             </button>
             <button 
               onClick={handleConfirm}
               className="flex-[2] py-5 px-8 rounded-2xl font-black text-lg uppercase tracking-tight bg-green-600 text-white shadow-xl shadow-green-200 hover:bg-green-500 transition-all active:scale-95 animate-pulse-grow"
             >
-              Deposit Item
+              Confirm Deposit
             </button>
           </div>
         </div>
@@ -246,7 +212,7 @@ const Recycle: React.FC<RecycleProps> = ({ onComplete }) => {
             <button 
               disabled={isProcessing || !isCameraReady}
               onClick={captureAndAnalyze}
-              className={`w-24 h-24 rounded-full border-[10px] border-slate-100 flex items-center justify-center transition-all ${isProcessing || !isCameraReady ? 'bg-slate-400 opacity-50' : 'bg-green-600 shadow-2xl shadow-green-200 active:scale-90 hover:scale-110'}`}
+              className={`w-24 h-24 rounded-full border-[10px] border-slate-100 flex items-center justify-center transition-all ${isProcessing || !isCameraReady ? 'bg-slate-400 opacity-50' : 'bg-green-600 shadow-2xl shadow-green-200 active:scale-90 hover:scale-105'}`}
             >
               <i className="fa-solid fa-shutter-speed text-white text-3xl"></i>
             </button>
@@ -255,7 +221,6 @@ const Recycle: React.FC<RecycleProps> = ({ onComplete }) => {
         )
       )}
 
-      {/* Hidden processing canvas */}
       <canvas ref={canvasRef} className="hidden" />
     </div>
   );
