@@ -3,22 +3,21 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { GeminiResponse } from "../types";
 
 export const identifyRecyclable = async (base64Image: string): Promise<GeminiResponse> => {
-  // Accessing the key strictly as per requirements
+  // Use the environment variable as per system requirements
   const apiKey = process.env.API_KEY;
-  
-  // Robust check for missing or 'mocked' keys often found in local environments
-  if (!apiKey || apiKey === "undefined" || apiKey === "your_api_key_here" || apiKey.trim() === "") {
-    console.error("CRITICAL: API_KEY is missing from the environment (process.env.API_KEY).");
-    throw new Error("API configuration missing. If running locally, ensure your .env file is loaded. If on Vercel, check your Environment Variables dashboard.");
+
+  if (!apiKey || apiKey === "undefined") {
+    console.error("DEBUG: API_KEY is missing from process.env");
+    throw new Error("API Key missing. Please ensure you have an .env file with API_KEY=your_key or set it in your deployment environment variables.");
   }
 
-  // Create a new instance for every call to ensure we use the freshest environment state
+  // Always initialize a new instance to ensure the latest API key is used
   const ai = new GoogleGenAI({ apiKey });
-  const model = 'gemini-3-flash-preview';
-  
+  const modelName = 'gemini-3-flash-preview';
+
   try {
-    const result = await ai.models.generateContent({
-      model,
+    const response = await ai.models.generateContent({
+      model: modelName,
       contents: {
         parts: [
           {
@@ -28,7 +27,7 @@ export const identifyRecyclable = async (base64Image: string): Promise<GeminiRes
             }
           },
           {
-            text: "Evaluate this image for a smart recycling vending machine. Identify the object, its material category (PLASTIC, GLASS, METAL, PAPER, ELECTRONICS, or UNKNOWN), and calculate a reward value (1-50 coins). Return only valid JSON."
+            text: "Analyze this image for a smart recycling vending machine. Identify the item, its material category (PLASTIC, GLASS, METAL, PAPER, ELECTRONICS, or UNKNOWN), and a recycling reward value between 1-50 coins. Return strictly JSON."
           }
         ]
       },
@@ -48,20 +47,20 @@ export const identifyRecyclable = async (base64Image: string): Promise<GeminiRes
       }
     });
 
-    const text = result.text;
+    const text = response.text;
     if (!text) {
-      throw new Error("The AI returned a blank response. Try a different angle.");
+      throw new Error("The AI returned an empty response. Try again with a clearer image.");
     }
 
     return JSON.parse(text);
   } catch (error: any) {
-    console.error("Detailed Gemini API Error:", error);
+    console.error("Gemini API Request Failed:", error);
     
-    // Catch-all for API Key issues returned from Google's servers
-    if (error.message?.toLowerCase().includes("api key") || error.status === "INVALID_ARGUMENT") {
-      throw new Error("The API key is either invalid or was not transmitted correctly. Please check your project settings.");
+    // Check for common API key errors
+    if (error.message?.includes("API key not found") || error.status === "INVALID_ARGUMENT") {
+      throw new Error("Authentication failed: The provided API Key is invalid or not found.");
     }
-
-    throw new Error(error.message || "The AI system is currently unavailable.");
+    
+    throw new Error(error.message || "An unexpected error occurred during AI analysis.");
   }
 };
