@@ -1,7 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
+
+// TEMPORARY: Verify Gemini API key is loaded
+const _key = (import.meta as any).env.VITE_GEMINI_API_KEY;
+const _masked = _key ? (String(_key).slice(0, 8) + (String(_key).length > 8 ? '...' : '')) : '<missing>';
+console.log("Gemini key present:", !!_key, "type:", typeof _key, "masked:", _masked, "length:", String(_key).length);
+console.log('VITE keys:', (import.meta as any).env);
+console.log('VITE_GEMINI_API_KEY (raw):', (import.meta as any).env.VITE_GEMINI_API_KEY);
+console.log('type:', typeof (import.meta as any).env.VITE_GEMINI_API_KEY);
+
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
 import Recycle from './pages/Recycle';

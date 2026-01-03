@@ -3,13 +3,18 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { GeminiResponse } from "../types";
 
 export const identifyRecyclable = async (base64Image: string): Promise<GeminiResponse> => {
-  // Accessing the key strictly as per requirements
-  const apiKey = process.env.API_KEY;
-  
-  // Robust check for missing or 'mocked' keys often found in local environments
-  if (!apiKey || apiKey === "undefined" || apiKey === "your_api_key_here" || apiKey.trim() === "") {
-    console.error("CRITICAL: API_KEY is missing from the environment (process.env.API_KEY).");
-    throw new Error("API configuration missing. If running locally, ensure your .env file is loaded. If on Vercel, check your Environment Variables dashboard.");
+  // Use Vite's import.meta.env to access VITE_GEMINI_API_KEY
+  const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY;
+
+  if (!apiKey || apiKey === "undefined" || apiKey === "REPLACE_ME" || apiKey.trim() === "") {
+    console.error("CRITICAL: VITE_GEMINI_API_KEY is missing or not set in .env.local");
+    throw new Error("API configuration missing. Ensure .env.local contains VITE_GEMINI_API_KEY with your Gemini API key.");
+  }
+
+  // Robust check for missing or placeholder keys often found in local environments
+  if (!apiKey || apiKey === "undefined" || apiKey === "your_api_key_here" || apiKey === "REPLACE_ME" || apiKey.trim() === "") {
+    console.error("CRITICAL: Gemini API key is missing. Checked VITE_GEMINI_API_KEY, GEMINI_API_KEY, and API_KEY.");
+    throw new Error("API configuration missing. If running locally, ensure your .env file is loaded and contains VITE_GEMINI_API_KEY. If on Vercel, check your Environment Variables dashboard.");
   }
 
   // Create a new instance for every call to ensure we use the freshest environment state
