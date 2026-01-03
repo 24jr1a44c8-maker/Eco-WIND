@@ -3,13 +3,12 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { GeminiResponse } from "../types";
 
 export const identifyRecyclable = async (base64Image: string): Promise<GeminiResponse> => {
-  // Accessing the key strictly as per requirements
+  // Use the environment variable as per system requirements
   const apiKey = process.env.API_KEY;
-  
-  // Robust check for missing or 'mocked' keys often found in local environments
-  if (!apiKey || apiKey === "undefined" || apiKey === "your_api_key_here" || apiKey.trim() === "") {
-    console.error("CRITICAL: API_KEY is missing from the environment (process.env.API_KEY).");
-    throw new Error("API configuration missing. If running locally, ensure your .env file is loaded. If on Vercel, check your Environment Variables dashboard.");
+
+  if (!apiKey || apiKey === "undefined") {
+    console.error("DEBUG: API_KEY is missing from process.env");
+    throw new Error("API Key missing. Please ensure you have an .env file with API_KEY=your_key or set it in your deployment environment variables.");
   }
 
   // Always initialize a new instance to ensure the latest API key is used
